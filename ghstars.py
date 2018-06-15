@@ -27,7 +27,9 @@ from itertools import chain
 from operator import itemgetter
 from datetime import datetime
 
-__version__ = '0.1'
+
+__version__ = '0.1.1'
+
 
 def gh_request(url, *args, **kwargs):
     BASE = r'https://api.github.com'
@@ -39,14 +41,12 @@ def gh_request(url, *args, **kwargs):
     return r
 
 
-def repos(owner, repolist=None, page=1):
-    if repolist is None:
-        repolist = []
+def repos(owner, page=1):
     r = gh_request('/users/{}/repos'.format(owner),
                    params={'per_page': 100, 'page': page})
     yield from iter(r.json())
     if r.links.get('next'):
-        yield from repos(owner, repolist, page=page+1)
+        yield from repos(owner, page=page+1)
 
 
 def main(*owners):
